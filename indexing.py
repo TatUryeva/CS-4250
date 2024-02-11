@@ -1,0 +1,71 @@
+#-------------------------------------------------------------------------
+# AUTHOR: your name
+# FILENAME: title of the source file
+# SPECIFICATION: description of the program
+# FOR: CS 4250- Assignment #1
+# TIME SPENT: how long it took you to complete the assignment
+#-----------------------------------------------------------*/
+
+#IMPORTANT NOTE: DO NOT USE ANY ADVANCED PYTHON LIBRARY TO COMPLETE THIS CODE SUCH AS numpy OR pandas. You have to work here only with standard arrays
+
+#Importing some Python libraries
+import csv
+
+documents = []
+
+#Reading the data in a csv file
+with open('collection.csv', 'r') as csvfile:
+  reader = csv.reader(csvfile)
+  for i, row in enumerate(reader):
+         if i > 0:  # skipping the header
+            documents.append(row[0])
+
+#Conducting stopword removal. Hint: use a set to define your stopwords.
+#--> add your Python code here
+stopWords = {'i ', 'my ', 'she ', 'her ','they ', 'their ', 'and ', 'or '}
+docs = []
+for i, document in enumerate(documents):
+    docs.append(document.split(' '))
+
+for i, document in enumerate(documents):
+    documents[i] = document.lower()
+    for ii, stopWord in enumerate(stopWords):
+        documents[i] = documents[i].replace(stopWord, '')
+
+#Conducting stemming. Hint: use a dictionary to map word variations to their stem.
+#--> add your Python code here
+stemming = {'love':['love', 'loves', 'loved'], 'cat':['cat', 'cats'], 'dog':['dog', 'dogs']}
+for i, document in enumerate(documents):
+    document = document.split(' ')
+    for ii, stem in enumerate(stemming):
+        for iii, word in enumerate(document):
+            if word in stemming['love']:
+              documents[i] = documents[i].replace(word, 'love')
+            elif word in stemming['cat']:
+              documents[i] = documents[i].replace(word, 'cat')
+            elif word in stemming['dog']:
+              documents[i] = documents[i].replace(word, 'dog')
+
+#Identifying the index terms.
+#--> add your Python code here
+terms = ['love', 'cat', 'dog']
+
+#Building the document-term matrix by using the tf-idf weights.
+#--> add your Python code here
+docTermMatrix = []
+for i, document in enumerate(documents):
+   docTermMatrix.append([])
+   for ii, term in enumerate(terms):
+       docTermMatrix[i].append(documents[i].count(term)/len(docs[i]))
+
+#Printing the document-term matrix.
+#--> add your Python code here
+print('          ', end='')
+for term in terms:
+    print(term, end = ' ')
+print()
+for i, document in enumerate(documents):
+   print('document' + str(i), end = ' ')
+   for ii, term in enumerate(terms):
+      print(str(round(docTermMatrix[i][ii], 2)), end = '  ')
+   print()
