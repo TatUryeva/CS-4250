@@ -1,0 +1,4 @@
+                love    cat     dog
+document0       0.0     0.07    0.0
+document1       0.0     0.0     0.04
+document2       0.0     0.03    0.03
