@@ -1,15 +1,16 @@
 #-------------------------------------------------------------------------
-# AUTHOR: your name
-# FILENAME: title of the source file
-# SPECIFICATION: description of the program
-# FOR: CS 4250- Assignment #1
-# TIME SPENT: how long it took you to complete the assignment
+# AUTHOR: Tatsiana Uryeva
+# FILENAME: indexing.py
+# SPECIFICATION: output a tf-idf document-term matrix
+# FOR: CS 4250 - Assignment #1
+# TIME SPENT: 2 hours
 #-----------------------------------------------------------*/
 
 #IMPORTANT NOTE: DO NOT USE ANY ADVANCED PYTHON LIBRARY TO COMPLETE THIS CODE SUCH AS numpy OR pandas. You have to work here only with standard arrays
 
 #Importing some Python libraries
 import csv
+import math
 
 documents = []
 
@@ -49,23 +50,32 @@ for i, document in enumerate(documents):
 #Identifying the index terms.
 #--> add your Python code here
 terms = ['love', 'cat', 'dog']
+P = []
+for i, term in enumerate(terms):
+       P.append(0)
+       for ii, document in enumerate(documents):
+              if term in document.split(' '):
+                     #P = P + 1
+                     P[i] = P[i] + 1
 
 #Building the document-term matrix by using the tf-idf weights.
 #--> add your Python code here
 docTermMatrix = []
 for i, document in enumerate(documents):
-   docTermMatrix.append([])
-   for ii, term in enumerate(terms):
-       docTermMatrix[i].append(documents[i].count(term)/len(docs[i]))
+       docTermMatrix.append([])
+       for ii, term in enumerate(terms):
+              tf = documents[i].count(term)/len(docs[i])
+              idf = math.log10(len(documents)/P[ii])
+              docTermMatrix[i].append(tf*idf)
 
 #Printing the document-term matrix.
 #--> add your Python code here
-print('          ', end='')
+print('\t', end='\t')
 for term in terms:
-    print(term, end = ' ')
+    print(term, end = '\t')
 print()
 for i, document in enumerate(documents):
-   print('document' + str(i), end = ' ')
+   print('document' + str(i), end = '\t')
    for ii, term in enumerate(terms):
-      print(str(round(docTermMatrix[i][ii], 2)), end = '  ')
+      print(str(round(docTermMatrix[i][ii], 2)), end = '\t')
    print()
