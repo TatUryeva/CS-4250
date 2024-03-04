@@ -12,7 +12,6 @@
 #importing some Python libraries
 # --> add your Python code here
 import psycopg2
-from psycopg2.extras import RealDictCursor
 import string
 
 def connectDataBase():
