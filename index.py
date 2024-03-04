@@ -1,13 +1,13 @@
 #-------------------------------------------------------------------------
-# AUTHOR: your name
-# FILENAME: title of the source file
-# SPECIFICATION: description of the program
-# FOR: CS 4250- Assignment #2
-# TIME SPENT: how long it took you to complete the assignment
+# AUTHOR: Tatsiana Uryeva
+# FILENAME: index.py
+# SPECIFICATION: database menu
+# FOR: CS 4250 - Assignment #2
+# TIME SPENT: 2 hours
 #-----------------------------------------------------------*/
 
 #importing some Python libraries
-from db_connection_solution import *
+from db_connection import *
 
 if __name__ == '__main__':
 
