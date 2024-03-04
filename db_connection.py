@@ -2,7 +2,7 @@
 # AUTHOR: Tatsiana Uryeva
 # FILENAME: db_connection
 # SPECIFICATION: database functions
-# FOR: CS 4250- Assignment #2
+# FOR: CS 4250 - Assignment #2
 # TIME SPENT: 2 hours
 #-----------------------------------------------------------*/
 
@@ -21,9 +21,9 @@ def connectDataBase():
     # --> add your Python code here
     DB_NAME = "Database"
     DB_USER = "postgres"
-    DB_PASS = "123"
+    DB_PASS = "password"
     DB_HOST = "localhost"
-    DB_PORT = "5432"
+    DB_PORT = "5433"
     try:
         conn = psycopg2.connect(database=DB_NAME,
                                 user=DB_USER,
@@ -34,11 +34,11 @@ def connectDataBase():
     except:
         print("Database not connected successfully")
 
-def createCategory(cur, cur, catId, catName):
+def createCategory(cur, catId, catName):
 
     # Insert a category in the database
     # --> add your Python code here
-    sql = "Insert into \"Categories\" (id_cat, name) Values (%s, '%s');"
+    sql = "Insert into \"Categories\" (id_cat, name) Values (%s, %s);"
     recset = [catId, catName]
     cur.execute(sql, recset)
 
@@ -46,14 +46,14 @@ def createDocument(cur, docId, docText, docTitle, docDate, docCat):
 
     # 1 Get the category id based on the informed category name
     # --> add your Python code here
-    sql = "Select id_cat from \"Categories where\" \"name\" = '%docCat';"
+    sql = "Select id_cat from \"Categories\" where \"name\" = %s;"
     recset = [docCat]
     cat_id = cur.execute(sql, recset)
 
     # 2 Insert the document in the database. For num_chars, discard the spaces and punctuation marks.
     # --> add your Python code here
-    sql = "Insert into \"Documents\" (doc, text, title, num_chars, date, cat_id) Values (%s, '%s', '%s', '%s',  %s);"
-    recset = [docId, docText, docTitle, docDate, cat_id]
+    sql = "Insert into \"Documents\" (doc, text, title, num_chars, date, cat_id) Values (%s, %s, %s, %s, %s, %s);"
+    recset = [docId, docText, docTitle, len(docText.strip(string.punctuation)), docDate, cat_id]
     cur.execute(sql, recset)
 
     # 3 Update the potential new terms.
@@ -62,14 +62,21 @@ def createDocument(cur, docId, docText, docTitle, docDate, docCat):
     # 3.3 In case the term does not exist, insert it into the database
     # --> add your Python code here
     sql = "Select term from \"Terms\";"
-    terms = cur.execute(sql)
+    cur.execute(sql)
+    terms = cur.fetchall()
+    #print(terms)
     text = docText.lower().split()
-    for i, word in enumerate(text)
+    #print(text)
+    for i, word in enumerate(text):
         text[i] = word.strip(string.punctuation)
-        if text[i] not in terms
-            sql = "Insert into \"Terms\" (term, num_chars) Values ('%s', %s);"
+        if text[i] not in terms:
+            sql = "Insert into \"Terms\" (term, num_chars) Values (%s, %s);"
             recset = [text[i], len(text[i])]
             cur.execute(sql, recset)
+
+        sql = "Insert into \"Document-Term\" (doc_id, term, term_count) Values (%s, %s, %s);"
+        recset = [docId, text[i], 0]
+        cur.execute(sql, recset)
 #        else
 #            sql = "Select term_count from Document-Term where doc_id = %s and term = '%s'"
 #            recset = [docId, text[i]]
@@ -84,14 +91,16 @@ def createDocument(cur, docId, docText, docTitle, docDate, docCat):
     # 4.2 Create a data structure the stores how many times (count) each term appears in the document
     # 4.3 Insert the term and its corresponding count into the database
     # --> add your Python code here
-    for i, word in enumerate(text)
-        sql = "Select term_count from \"Document-Term\" where doc_id = %s and term = '%s';"
+    for i, word in enumerate(text):
+        sql = "Select term_count from \"Document-Term\" where doc_id = %s and term = %s;"
         recset = [docId, text[i]]
-        term_count = cur.execute(sql, recset)
+        cur.execute(sql, recset)
+        term_count = cur.fetchone()
+        term_count = term_count[0]
         term_count = term_count + 1
-        sql = "Insert into \"Document-Term\" (doc_id, term, term_count) Values (%s, '%s', %s);"
-        recset = [docId, text[i], term_count]
-        cur.execute(sql, recset)    
+        sql = "Update \"Document-Term\" set term_count = %s where doc_id = %s and term = %s;"
+        recset = [term_count, docId, text[i]]
+        cur.execute(sql, recset)  
 
 def deleteDocument(cur, docId):
 
@@ -104,12 +113,14 @@ def deleteDocument(cur, docId):
     cur.execute(sql, recset)
     
     sql = "Select term from \"Terms\";"
-    terms = cur.execute(sql)
-    sql = "Select term from \"Document-Term\;"
-    occurrences = cur.execute(sql)
-    for term in terms
-        if term not in occurrences
-            sql = "Delete from \"Terms\" where term = '%s';"
+    cur.execute(sql)
+    terms = cur.fetchall()
+    sql = "Select term from \"Document-Term\";"
+    cur.execute(sql)
+    occurrences = cur.fetchall()
+    for term in terms:
+        if term not in occurrences:
+            sql = "Delete from \"Terms\" where term = %s;"
             recset = [term]
             cur.execute(sql, recset)
 
@@ -140,12 +151,24 @@ def getIndex(cur):
     # ...
     # --> add your Python code here
     sql = "Select term from \"Terms\";"
-    terms = cur.execute(sql)
-    sql = "Select term, title, term_count from \"Document-Term\" inner join Documents on doc_id = doc;"
-    occurrences = cur.execute(sql)
-    inverted_index = dict(term = '', documents = [])
-    for term in terms
-        #inverted_index[term] = term
-        for occurrence in occurrences
-            if occurrence[term] = term
-                inverted_index[term][documents].append(occurrence[title][term_count])
+    cur.execute(sql)
+    terms = cur.fetchall()
+    #print("terms")
+    #print(terms, "\n")
+    sql = "Select term, title, term_count from \"Document-Term\" inner join \"Documents\" on doc_id = doc;"
+    cur.execute(sql)
+    occurrences = cur.fetchall()
+    #print("occurrences")
+    #print(occurrences, "\n")
+    inverted_index = dict()
+    for i, term in enumerate(terms):
+        inverted_index[term[0]] = list()
+        for ii, occurrence in enumerate(occurrences):
+            if occurrence[0] == term[0]:
+                #print(occurrence, end = " ")
+                #print(occurrence[1], end = " ")
+                #print(occurrence[2], end = "\n")
+                inverted_index[term[0]].append({occurrence[1]:occurrence[2]})
+    #print("inverted_index")
+    #print(inverted_index)
+    return inverted_index
