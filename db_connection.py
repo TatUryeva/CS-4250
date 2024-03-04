@@ -143,9 +143,9 @@ def getIndex(cur):
     terms = cur.execute(sql)
     sql = "Select term, title, term_count from \"Document-Term\" inner join Documents on doc_id = doc;"
     occurrences = cur.execute(sql)
-    inverted_index = dict(term = '', documents = {})
+    inverted_index = dict(term = '', documents = [])
     for term in terms
-        inverted_index[term] = term
+        #inverted_index[term] = term
         for occurrence in occurrences
             if occurrence[term] = term
                 inverted_index[term][documents].append(occurrence[title][term_count])
