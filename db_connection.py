@@ -38,7 +38,7 @@ def createCategory(cur, cur, catId, catName):
 
     # Insert a category in the database
     # --> add your Python code here
-    sql = "Insert into Categories (id_cat, name) Values (%s, '%s');"
+    sql = "Insert into \"Categories\" (id_cat, name) Values (%s, '%s');"
     recset = [catId, catName]
     cur.execute(sql, recset)
 
@@ -46,13 +46,13 @@ def createDocument(cur, docId, docText, docTitle, docDate, docCat):
 
     # 1 Get the category id based on the informed category name
     # --> add your Python code here
-    sql = "Select id_cat from Categories where \"name\" = '%docCat';"
+    sql = "Select id_cat from \"Categories where\" \"name\" = '%docCat';"
     recset = [docCat]
     cat_id = cur.execute(sql, recset)
 
     # 2 Insert the document in the database. For num_chars, discard the spaces and punctuation marks.
     # --> add your Python code here
-    sql = "Insert into Documents (doc, text, title, num_chars, date, cat_id) Values (%s, '%s', '%s', '%s',  %s);"
+    sql = "Insert into \"Documents\" (doc, text, title, num_chars, date, cat_id) Values (%s, '%s', '%s', '%s',  %s);"
     recset = [docId, docText, docTitle, docDate, cat_id]
     cur.execute(sql, recset)
 
@@ -61,13 +61,13 @@ def createDocument(cur, docId, docText, docTitle, docDate, docCat):
     # 3.2 For each term identified, check if the term already exists in the database
     # 3.3 In case the term does not exist, insert it into the database
     # --> add your Python code here
-    sql = "Select term from Terms;"
+    sql = "Select term from \"Terms\";"
     terms = cur.execute(sql)
     text = docText.lower().split()
     for i, word in enumerate(text)
         text[i] = word.strip(string.punctuation)
         if text[i] not in terms
-            sql = "Insert into Terms (term, num_chars) Values ('%s', %s);"
+            sql = "Insert into \"Terms\" (term, num_chars) Values ('%s', %s);"
             recset = [text[i], len(text[i])]
             cur.execute(sql, recset)
 #        else
@@ -99,23 +99,23 @@ def deleteDocument(cur, docId):
     # 1.1 For each term identified, delete its occurrences in the index for that document
     # 1.2 Check if there are no more occurrences of the term in another document. If this happens, delete the term from the database.
     # --> add your Python code here
-    sql = "Delete from Document-Term where doc_id = %s;"
+    sql = "Delete from \"Document-Term\" where doc_id = %s;"
     recset = [docId]
     cur.execute(sql, recset)
     
-    sql = "Select term from Terms;"
+    sql = "Select term from \"Terms\";"
     terms = cur.execute(sql)
     sql = "Select term from \"Document-Term\;"
     occurrences = cur.execute(sql)
     for term in terms
         if term not in occurrences
-            sql = "Delete from Terms where term = '%s';"
+            sql = "Delete from \"Terms\" where term = '%s';"
             recset = [term]
             cur.execute(sql, recset)
 
     # 2 Delete the document from the database
     # --> add your Python code here
-    sql = "Delete from Documents where doc = %s;"
+    sql = "Delete from \"Documents\" where doc = %s;"
     recset = [docId]
     cur.execute(sql, recset)
 
@@ -123,13 +123,13 @@ def updateDocument(cur, docId, docText, docTitle, docDate, docCat):
 
     # 1 Delete the document
     # --> add your Python code here
-    sql = "Delete from Documents where doc = %s;"
+    sql = "Delete from \"Documents\" where doc = %s;"
     recset = [docId]
     cur.execute(sql, recset)
 
     # 2 Create the document with the same id
     # --> add your Python code here
-    sql = "Insert into Documents (doc, text, title, num_chars, date, cat_id) Values (%s, '%s', '%s', '%s',  %s);"
+    sql = "Insert into \"Documents\" (doc, text, title, num_chars, date, cat_id) Values (%s, '%s', '%s', '%s',  %s);"
     recset = [docId, docText, docTitle, docDate, cat_id]
     cur.execute(sql, recset)
 
@@ -139,12 +139,13 @@ def getIndex(cur):
     # {'baseball':'Exercise:1','summer':'Exercise:1,California:1,Arizona:1','months':'Exercise:1,Discovery:3'}
     # ...
     # --> add your Python code here
-    sql = "Select term from Terms;"
+    sql = "Select term from \"Terms\";"
     terms = cur.execute(sql)
-    sql = "Select term, title, term_count from "Document-Term" inner join "Documents" on doc_id = doc;"
+    sql = "Select term, title, term_count from \"Document-Term\" inner join Documents on doc_id = doc;"
     occurrences = cur.execute(sql)
-    inverted_index = dict()
+    inverted_index = dict(term = '', documents = {})
     for term in terms
         inverted_index[term] = term
         for occurrence in occurrences
-            inverted_index[term][documents] = occurrence[title][term_count]
+            if occurrence[term] = term
+                inverted_index[term][documents].append(occurrence[title][term_count])
