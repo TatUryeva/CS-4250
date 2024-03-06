@@ -133,15 +133,17 @@ def updateDocument(cur, docId, docText, docTitle, docDate, docCat):
 
     # 1 Delete the document
     # --> add your Python code here
-    sql = "Delete from \"Documents\" where doc = %s;"
-    recset = [docId]
-    cur.execute(sql, recset)
+    deleteDocument(cur, docId)
+    #sql = "Delete from \"Documents\" where doc = %s;"
+    #recset = [docId]
+    #cur.execute(sql, recset)
 
     # 2 Create the document with the same id
     # --> add your Python code here
-    sql = "Insert into \"Documents\" (doc, text, title, num_chars, date, cat_id) Values (%s, '%s', '%s', '%s',  %s);"
-    recset = [docId, docText, docTitle, docDate, cat_id]
-    cur.execute(sql, recset)
+    createDocument(cur, docId, docText, docTitle, docDate, docCat)
+    #sql = "Insert into \"Documents\" (doc, text, title, num_chars, date, cat_id) Values (%s, '%s', '%s', '%s',  %s);"
+    #recset = [docId, docText, docTitle, docDate, cat_id]
+    #cur.execute(sql, recset)
 
 def getIndex(cur):
 
