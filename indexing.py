@@ -24,10 +24,6 @@ with open('collection.csv', 'r') as csvfile:
 #Conducting stopword removal. Hint: use a set to define your stopwords.
 #--> add your Python code here
 stopWords = {'i ', 'my ', 'she ', 'her ','they ', 'their ', 'and ', 'or '}
-docs = []
-for i, document in enumerate(documents):
-    docs.append(document.split(' '))
-
 for i, document in enumerate(documents):
     documents[i] = document.lower()
     for ii, stopWord in enumerate(stopWords):
@@ -64,7 +60,7 @@ docTermMatrix = []
 for i, document in enumerate(documents):
        docTermMatrix.append([])
        for ii, term in enumerate(terms):
-              tf = documents[i].count(term)/len(docs[i])
+              tf = documents[i].count(term)/len(document.split(' '))
               idf = math.log10(len(documents)/P[ii])
               docTermMatrix[i].append(tf*idf)
 
