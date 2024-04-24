@@ -15,10 +15,10 @@ def crawlerThread (frontier):
                 url = 'https://www.cpp.edu'+url  
             print('opening url:', url, end='\n')                
             html = urlopen(url)
-            #bs = BeautifulSoup(html.read(), 'html.parser')
+            bs = BeautifulSoup(html.read(), 'html.parser')
             db.pages.insert_one({'url':url, 'html':html.read()})
-            #if bs.find(re.compile('h[1-6]'), text = re.compile('Permanent Faculty')):
-            if url == 'https://www.cpp.edu/sci/computer-science/faculty-and-staff/permanent-faculty.shtml':
+            if bs.find(re.compile('h[1-6]'), text = re.compile('Permanent Faculty')):
+            #if url == 'https://www.cpp.edu/sci/computer-science/faculty-and-staff/permanent-faculty.shtml':
                 frontier.clear()
                 print(bs.prettify())
             else:
