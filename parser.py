@@ -16,11 +16,11 @@ def crawlerThread (frontier):
                 url = 'https://www.cpp.edu'+url  
             print('opening url:', url, end='\n')                
             html = urlopen(url)
-            #bs = BeautifulSoup(html.read(), 'html.parser')
-            #if bs.find(re.compile('h[1-6]'), text = re.compile('Permanent Faculty')):
-            if url == 'https://www.cpp.edu/sci/computer-science/faculty-and-staff/permanent-faculty.shtml':
+            bs = BeautifulSoup(html.read(), 'html.parser')
+            if bs.find(re.compile('h[1-6]'), text = re.compile('Permanent Faculty')):
+            #if url == 'https://www.cpp.edu/sci/computer-science/faculty-and-staff/permanent-faculty.shtml':
                 frontier.clear()
-                bs = BeautifulSoup(html.read(), 'html.parser')
+                #bs = BeautifulSoup(html.read(), 'html.parser')
                 names = bs.findAll('h2', id = None)
                 infos = bs.findAll('p', class_ = None)
                 for name, info in zip(names, infos):
